@@ -1,0 +1,15 @@
+
+#Create an Artifact Registry repository
+gcloud artifacts repositories create host-api-repo --repository-format=docker --location=southamerica-east1
+
+#Build and tag the Docker image
+docker build -t southamerica-east1-docker.pkg.dev/net-poc-projects/host-api-repo/host-api:latest .
+
+#Authenticate with Artifact Registry
+gcloud auth configure-docker southamerica-east1-docker.pkg.dev
+
+#Push image to Artifact Registry Repo
+docker push southamerica-east1-docker.pkg.dev/net-poc-projects/host-api-repo/host-api:latest
+
+# Deploy to Cloud Run
+gcloud run deploy host-api --image southamerica-east1-docker.pkg.dev/net-poc-projects/host-api-repo/host-api:latest --region southamerica-east1 --allow-unauthenticated
