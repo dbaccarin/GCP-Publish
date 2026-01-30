@@ -17,18 +17,31 @@ jobs:
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
+        
+      # 1. Setup .NET SDK (2026 uses .NET 10)
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
 
-      # 1. Login to GCP using JSON Key
+      # 2. Run Unit Tests
+      # Using --logger:github allows you to see test failures directly in the PR/Action UI
+      - name: Run Tests
+        run: |
+          dotnet restore
+          dotnet test --no-restore --verbosity normal --logger:"github;summary=true"
+        
+      # 3. Login to GCP using JSON Key
       - id: 'auth'
         uses: 'google-github-actions/auth@v2'
         with:
           credentials_json: '${{ secrets.GCP_SA_KEY }}'
 
-      # 2. Configure Docker for Artifact Registry
+      # 4. Configure Docker for Artifact Registry
       - name: Configure Docker
         run: gcloud auth configure-docker ${{ env.REGION }}-docker.pkg.dev
 
-      # 3. Build & Push Image
+      # 5. Build & Push Image
       - name: Build and Push
         run: |
           TAG="${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPO_NAME }}/${{ env.IMAGE_NAME }}:${{ github.sha }}"
@@ -37,7 +50,7 @@ jobs:
           docker push $TAG
           echo "IMAGE_TAG=$TAG" >> $GITHUB_ENV
 
-      # 4. Deploy to Cloud Run
+      # 6. Deploy to Cloud Run
       - name: Deploy to Cloud Run
         uses: 'google-github-actions/deploy-cloudrun@v2'
         with:
