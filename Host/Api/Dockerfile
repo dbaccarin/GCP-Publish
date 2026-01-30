@@ -6,7 +6,7 @@ WORKDIR /app
 COPY . ./
 
 # Build and publish the application
-RUN dotnet publish ./Host/Api.csproj -c Release -o out/api
+RUN dotnet publish ./Host/Api/Api.csproj -c Release -o out/api
 
 # Use the official .NET 8.0 ASP.NET Core runtime image for running the application
 FROM mcr.microsoft.com/dotnet/aspnet:8.0
