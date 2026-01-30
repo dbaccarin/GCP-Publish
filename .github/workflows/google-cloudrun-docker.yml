@@ -1,4 +1,4 @@
-name: .NET Cloud Run Deploy
+name: Cloud Run Deploy
 
 on:
   push:
@@ -32,7 +32,9 @@ jobs:
       - name: Build and Push
         run: |
           TAG="${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPO_NAME }}/${{ env.IMAGE_NAME }}:${{ github.sha }}"
-          docker build -t $TAG .
+          echo "Current directory:"
+          pwd
+          docker build -t $TAG -f ./Host/Api/Dockerfile .
           docker push $TAG
           echo "IMAGE_TAG=$TAG" >> $GITHUB_ENV
 
