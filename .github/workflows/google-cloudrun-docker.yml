@@ -30,7 +30,7 @@ jobs:
         working-directory: ./Host/Api.Test
         run: |
           dotnet restore
-          dotnet test --no-restore --verbosity normal --logger:"github;summary=true"
+          dotnet test --no-restore --verbosity normal --logger:"GitHubActions;summary=true"
         
       # 3. Login to GCP using JSON Key
       - id: 'auth'
