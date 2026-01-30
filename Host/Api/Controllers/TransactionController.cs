@@ -8,18 +8,21 @@ namespace Api.Controllers
     public class TransactionController : Controller
     {
         [HttpGet("Get")]
-        public IEnumerable<Transaction> Get()
+        public IActionResult Get()
         {
-            return new List<Transaction>()
-            {
-                new Transaction()
-                {
-                    Id = new Guid(),
-                    Description = "Test",
-                    Value = 10,
-                    Date = DateTime.Now
-                }
-            };
+            List<Transaction> result =
+             new List<Transaction>()
+             {
+                    new Transaction()
+                    {
+                        Id = new Guid(),
+                        Description = "Test",
+                        Value = 10,
+                        Date = DateTime.Now
+                    }
+             };
+
+            return Ok(result);
         }
     }
 }

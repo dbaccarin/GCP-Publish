@@ -24,6 +24,6 @@ ENTRYPOINT ["dotnet", "Api.dll"]
 
 # bash
 
-# docker build -t host-api .
+# docker build -t host-api -f Host/Api/Dockerfile .
 # docker run -it --rm -p 8081:8080 --name web-api host-api
 # http://localhost:8081/swagger/index.html
