@@ -32,8 +32,7 @@ jobs:
       - name: Build and Push
         run: |
           TAG="${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPO_NAME }}/${{ env.IMAGE_NAME }}:${{ github.sha }}"
-          echo "Current directory:"
-          pwd
+          echo "current workspace: ${{ github.workspace }}"
           docker build -t $TAG -f ./Host/Api/Dockerfile .
           docker push $TAG
           echo "IMAGE_TAG=$TAG" >> $GITHUB_ENV
