@@ -1,0 +1,46 @@
+name: .NET Cloud Run Deploy
+
+on:
+  push:
+    branches: [ "main" ]
+
+env:
+  PROJECT_ID: net-poc-projects
+  REGION: southamerica-east1
+  SERVICE_NAME: host-api
+  IMAGE_NAME: host-api
+  REPO_NAME: host-api-repo
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      # 1. Login to GCP using JSON Key
+      - id: 'auth'
+        uses: 'google-github-actions/auth@v2'
+        with:
+          credentials_json: '${{ secrets.GCP_SA_KEY }}'
+
+      # 2. Configure Docker for Artifact Registry
+      - name: Configure Docker
+        run: gcloud auth configure-docker ${{ env.REGION }}-docker.pkg.dev
+
+      # 3. Build & Push Image
+      - name: Build and Push
+        run: |
+          TAG="${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPO_NAME }}/${{ env.IMAGE_NAME }}:${{ github.sha }}"
+          docker build -t $TAG .
+          docker push $TAG
+          echo "IMAGE_TAG=$TAG" >> $GITHUB_ENV
+
+      # 4. Deploy to Cloud Run
+      - name: Deploy to Cloud Run
+        uses: 'google-github-actions/deploy-cloudrun@v2'
+        with:
+          service: ${{ env.SERVICE_NAME }}
+          region: ${{ env.REGION }}
+          image: ${{ env.IMAGE_TAG }}
+          flags: '--allow-unauthenticated'
