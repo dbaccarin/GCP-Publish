@@ -59,4 +59,4 @@ jobs:
           region: ${{ env.REGION }}
           image: ${{ env.IMAGE_TAG }}
           flags: '--allow-unauthenticated'
-          secrets: ConnectionStrings__DefaultConnection=DB_CONNECTION_STRING_MONGODB:latest
+          secrets: ConnectionStrings__MongoConnection=DB_CONNECTION_STRING_MONGODB:latest
